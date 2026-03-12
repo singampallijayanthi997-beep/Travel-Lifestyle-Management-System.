@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Tourist Guides</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#eef6ff;
+margin:0;
+}
+
+.header{
+background:#0077cc;
+color:white;
+padding:15px;
+text-align:center;
+font-size:22px;
+}
+
+.container{
+padding:30px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+}
+
+th,td{
+padding:10px;
+border:1px solid #ddd;
+text-align:center;
+}
+
+th{
+background:#0077cc;
+color:white;
+}
+
+button{
+padding:8px 12px;
+margin-bottom:15px;
+cursor:pointer;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+<button onclick="window.location='/dashboard'">Dashboard</button>
+
+Tourist Guides
+
+</div>
+
+<div class="container">
+
+<button onclick="loadGuides()">Load Guides</button>
+
+<table id="guidesTable">
+
+<thead>
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Phone</th>
+<th>Location ID</th>
+<th>Experience</th>
+</tr>
+</thead>
+
+<tbody></tbody>
+
+</table>
+
+</div>
+
+<script>
+
+function loadGuides(){
+
+fetch("/guides")
+
+.then(res=>res.json())
+
+.then(data=>{
+
+let tbody=document.querySelector("#guidesTable tbody")
+
+tbody.innerHTML=""
+
+data.forEach(row=>{
+
+tbody.innerHTML+=`
+<tr>
+<td>${row.guide_id}</td>
+<td>${row.guide_name}</td>
+<td>${row.phone}</td>
+<td>${row.location_id}</td>
+<td>${row.experience}</td>
+</tr>
+`
+
+})
+
+})
+
+}
+
+</script>
+
+</body>
+
+</html>

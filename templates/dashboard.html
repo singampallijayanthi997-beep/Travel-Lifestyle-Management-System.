@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Travel Lifestyle Dashboard</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#eaf4ff;
+margin:0;
+}
+
+.header{
+background:#0077cc;
+color:white;
+padding:15px;
+text-align:center;
+font-size:24px;
+}
+
+.container{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:25px;
+padding:40px;
+}
+
+.card{
+background:white;
+padding:30px;
+text-align:center;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,0.2);
+cursor:pointer;
+font-size:18px;
+transition:0.2s;
+}
+
+.card:hover{
+background:#0077cc;
+color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+Travel Lifestyle Management System
+</div>
+
+<div class="container">
+
+<div class="card" onclick="window.location.href='/hotels_page'">
+Hotels
+</div>
+
+<div class="card" onclick="window.location.href='/places_page'">
+Places to Visit
+</div>
+
+<div class="card" onclick="window.location.href='/guides_page'">
+Tourist Guides
+</div>
+
+<div class="card" onclick="window.location.href='/transport_page'">
+Transport
+</div>
+
+<div class="card" onclick="window.location.href='/reviews_page'">
+Reviews
+</div>
+
+<div class="card" onclick="window.location.href='/budget_page'">
+Budget Planner
+</div>
+
+<div class="card" onclick="window.location.href='/queries_page'">
+DBMS Queries
+</div>
+
+</div>
+
+</body>
+
+</html>

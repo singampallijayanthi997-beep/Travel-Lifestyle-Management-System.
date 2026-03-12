@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>DBMS Query Execution</title>
+
+<style>
+
+body{
+font-family:Arial;
+margin:0;
+background:#eef6ff;
+}
+
+.header{
+background:#0077cc;
+color:white;
+padding:15px;
+text-align:center;
+font-size:22px;
+position:relative;
+}
+
+.back{
+position:absolute;
+left:20px;
+top:15px;
+background:white;
+color:#0077cc;
+padding:6px 12px;
+border-radius:5px;
+cursor:pointer;
+}
+
+.container{
+display:flex;
+height:90vh;
+}
+
+.left{
+width:40%;
+background:white;
+overflow:auto;
+padding:20px;
+border-right:2px solid #ddd;
+}
+
+.right{
+width:60%;
+padding:20px;
+overflow:auto;
+}
+
+.query{
+padding:12px;
+margin-bottom:10px;
+background:#e3f2fd;
+cursor:pointer;
+border-radius:5px;
+}
+
+.query:hover{
+background:#0077cc;
+color:white;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+}
+
+th,td{
+padding:10px;
+border:1px solid #ddd;
+text-align:center;
+}
+
+th{
+background:#0077cc;
+color:white;
+}
+
+button{
+padding:6px 10px;
+margin-left:5px;
+cursor:pointer;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+<span class="back" onclick="window.location='/dashboard'">Dashboard</span>
+
+DBMS Query Execution
+
+</div>
+
+<div class="container">
+
+<div class="left" id="queryList"></div>
+
+<div class="right">
+
+<div style="margin-bottom:15px;">
+
+<input type="text" id="searchQuery" placeholder="Search queries..."
+style="padding:8px;width:200px">
+
+<button onclick="clearTable()">Clear</button>
+
+<button onclick="exportCSV()">Export CSV</button>
+
+</div>
+
+<table id="resultTable">
+<thead></thead>
+<tbody></tbody>
+</table>
+
+</div>
+
+</div>
+
+<script>
+
+let queries = [
+
+{name:"View Hotels", sql:"SELECT * FROM Hotels"},
+{name:"View Places", sql:"SELECT * FROM Places"},
+{name:"View Guides", sql:"SELECT * FROM Tourist_Guides"},
+{name:"View Transport", sql:"SELECT * FROM Transport"},
+{name:"View Reviews", sql:"SELECT * FROM Reviews"},
+{name:"View Locations", sql:"SELECT * FROM Locations"},
+{name:"View Users", sql:"SELECT * FROM Users"},
+{name:"View Budget Planner", sql:"SELECT * FROM Budget_Planner"},
+
+{name:"COUNT Hotels", sql:"SELECT COUNT(*) AS TotalHotels FROM Hotels"},
+{name:"COUNT Places", sql:"SELECT COUNT(*) AS TotalPlaces FROM Places"},
+{name:"COUNT Guides", sql:"SELECT COUNT(*) AS TotalGuides FROM Tourist_Guides"},
+{name:"COUNT Transport", sql:"SELECT COUNT(*) AS TotalTransport FROM Transport"},
+{name:"COUNT Reviews", sql:"SELECT COUNT(*) AS TotalReviews FROM Reviews"},
+
+{name:"MAX Hotel Price", sql:"SELECT MAX(price_per_night) AS MaxHotelPrice FROM Hotels"},
+{name:"MIN Hotel Price", sql:"SELECT MIN(price_per_night) AS MinHotelPrice FROM Hotels"},
+{name:"AVG Hotel Price", sql:"SELECT AVG(price_per_night) AS AvgHotelPrice FROM Hotels"},
+{name:"SUM Hotel Price", sql:"SELECT SUM(price_per_night) AS TotalHotelPrice FROM Hotels"},
+
+{name:"MAX Guide Experience", sql:"SELECT MAX(experience) AS MaxExperience FROM Tourist_Guides"},
+{name:"MIN Guide Experience", sql:"SELECT MIN(experience) AS MinExperience FROM Tourist_Guides"},
+{name:"AVG Guide Experience", sql:"SELECT AVG(experience) AS AvgExperience FROM Tourist_Guides"},
+
+{name:"Hotels Ordered By Price", sql:"SELECT * FROM Hotels ORDER BY price_per_night DESC"},
+{name:"Guides Ordered By Experience", sql:"SELECT * FROM Tourist_Guides ORDER BY experience DESC"},
+
+{name:"Hotels and Locations (JOIN)", sql:"SELECT Hotels.hotel_name, Locations.location_name FROM Hotels JOIN Locations ON Hotels.location_id = Locations.location_id"},
+
+{name:"Places and Locations (JOIN)", sql:"SELECT Places.place_name, Locations.location_name FROM Places JOIN Locations ON Places.location_id = Locations.location_id"},
+
+{name:"Transport and Locations (JOIN)", sql:"SELECT Transport.type, Locations.location_name FROM Transport JOIN Locations ON Transport.location_id = Locations.location_id"},
+
+{name:"Hotels Above Average Price", sql:"SELECT * FROM Hotels WHERE price_per_night > (SELECT AVG(price_per_night) FROM Hotels)"},
+
+{name:"Guides Above Avg Experience", sql:"SELECT * FROM Tourist_Guides WHERE experience > (SELECT AVG(experience) FROM Tourist_Guides)"}
+
+]
+
+let list=document.getElementById("queryList")
+
+queries.forEach((q)=>{
+
+let div=document.createElement("div")
+div.className="query"
+div.innerText=q.name
+
+div.onclick=function(){
+runQuery(q.sql)
+}
+
+list.appendChild(div)
+
+})
+
+function runQuery(sql){
+
+fetch("/run_query",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+query:sql
+})
+
+})
+
+.then(res=>res.json())
+
+.then(data=>{
+
+let thead=document.querySelector("#resultTable thead")
+let tbody=document.querySelector("#resultTable tbody")
+
+thead.innerHTML=""
+tbody.innerHTML=""
+
+if(data.length>0){
+
+let columns=Object.keys(data[0])
+
+let headRow="<tr>"
+
+columns.forEach(col=>{
+headRow+="<th>"+col+"</th>"
+})
+
+headRow+="</tr>"
+
+thead.innerHTML=headRow
+
+data.forEach(row=>{
+
+let tr="<tr>"
+
+columns.forEach(col=>{
+tr+="<td>"+row[col]+"</td>"
+})
+
+tr+="</tr>"
+
+tbody.innerHTML+=tr
+
+})
+
+}
+
+})
+
+}
+
+function clearTable(){
+
+document.querySelector("#resultTable thead").innerHTML=""
+document.querySelector("#resultTable tbody").innerHTML=""
+
+}
+
+function exportCSV(){
+
+let rows=document.querySelectorAll("table tr")
+let csv=[]
+
+rows.forEach(function(row){
+
+let cols=row.querySelectorAll("td,th")
+let rowData=[]
+
+cols.forEach(function(col){
+rowData.push(col.innerText)
+})
+
+csv.push(rowData.join(","))
+
+})
+
+let blob=new Blob([csv.join("\n")],{type:"text/csv"})
+let link=document.createElement("a")
+
+link.href=URL.createObjectURL(blob)
+link.download="query_result.csv"
+link.click()
+
+}
+
+let search=document.getElementById("searchQuery")
+
+search.addEventListener("keyup",function(){
+
+let value=this.value.toLowerCase()
+let items=document.querySelectorAll(".query")
+
+items.forEach(function(q){
+
+if(q.innerText.toLowerCase().includes(value)){
+q.style.display="block"
+}else{
+q.style.display="none"
+}
+
+})
+
+})
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Hotels</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#eef6ff;
+margin:0;
+}
+
+.header{
+background:#0077cc;
+color:white;
+padding:15px;
+text-align:center;
+font-size:22px;
+}
+
+.container{
+padding:30px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+}
+
+th,td{
+padding:10px;
+border:1px solid #ddd;
+text-align:center;
+}
+
+th{
+background:#0077cc;
+color:white;
+}
+
+button{
+margin-bottom:20px;
+padding:10px;
+background:#0077cc;
+color:white;
+border:none;
+cursor:pointer;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+Hotels Available
+</div>
+
+<div class="container">
+
+<button onclick="loadHotels()">Load Hotels</button>
+
+<table id="hotelTable">
+
+<thead>
+
+<tr>
+<th>ID</th>
+<th>Hotel Name</th>
+<th>Location ID</th>
+<th>Price</th>
+<th>Availability</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+</tbody>
+
+</table>
+
+</div>
+
+<script>
+
+function loadHotels(){
+
+fetch("/hotels")
+
+.then(res=>res.json())
+
+.then(data=>{
+
+let tableBody=document.querySelector("#hotelTable tbody")
+
+tableBody.innerHTML=""
+
+data.forEach(hotel=>{
+
+let row=`
+<tr>
+<td>${hotel.hotel_id}</td>
+<td>${hotel.hotel_name}</td>
+<td>${hotel.location_id}</td>
+<td>${hotel.price_per_night}</td>
+<td>${hotel.availability}</td>
+</tr>
+`
+
+tableBody.innerHTML+=row
+
+})
+
+})
+
+}
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Places</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#eef6ff;
+margin:0;
+}
+
+.header{
+background:#0077cc;
+color:white;
+padding:15px;
+text-align:center;
+font-size:22px;
+}
+
+.container{
+padding:30px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+}
+
+th,td{
+padding:10px;
+border:1px solid #ddd;
+text-align:center;
+}
+
+th{
+background:#0077cc;
+color:white;
+}
+
+button{
+padding:8px 12px;
+margin-bottom:15px;
+cursor:pointer;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+<button onclick="window.location='/dashboard'">Dashboard</button>
+
+Places to Visit
+
+</div>
+
+<div class="container">
+
+<button onclick="loadPlaces()">Load Places</button>
+
+<table id="placesTable">
+
+<thead>
+<tr>
+<th>ID</th>
+<th>Place Name</th>
+<th>Location ID</th>
+<th>Category</th>
+</tr>
+</thead>
+
+<tbody></tbody>
+
+</table>
+
+</div>
+
+<script>
+
+function loadPlaces(){
+
+fetch("/places")
+
+.then(res=>res.json())
+
+.then(data=>{
+
+let tbody=document.querySelector("#placesTable tbody")
+
+tbody.innerHTML=""
+
+data.forEach(row=>{
+
+tbody.innerHTML+=`
+<tr>
+<td>${row.place_id}</td>
+<td>${row.place_name}</td>
+<td>${row.location_id}</td>
+<td>${row.category}</td>
+</tr>
+`
+
+})
+
+})
+
+}
+
+</script>
+
+</body>
+
+</html>
